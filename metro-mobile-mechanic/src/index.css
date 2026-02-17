@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Open+Sans:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 10%;
+    --foreground: 40 10% 92%;
+
+    --card: 220 18% 14%;
+    --card-foreground: 40 10% 92%;
+
+    --popover: 220 18% 14%;
+    --popover-foreground: 40 10% 92%;
+
+    --primary: 28 95% 55%;
+    --primary-foreground: 220 20% 8%;
+
+    --secondary: 220 15% 20%;
+    --secondary-foreground: 40 10% 92%;
+
+    --muted: 220 15% 18%;
+    --muted-foreground: 220 10% 55%;
+
+    --accent: 28 95% 55%;
+    --accent-foreground: 220 20% 8%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 15% 22%;
+    --input: 220 15% 22%;
+    --ring: 28 95% 55%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 220 20% 10%;
+    --sidebar-foreground: 40 10% 92%;
+    --sidebar-primary: 28 95% 55%;
+    --sidebar-primary-foreground: 220 20% 8%;
+    --sidebar-accent: 220 15% 18%;
+    --sidebar-accent-foreground: 40 10% 92%;
+    --sidebar-border: 220 15% 22%;
+    --sidebar-ring: 28 95% 55%;
+
+    --font-heading: 'Rajdhani', sans-serif;
+    --font-body: 'Open Sans', sans-serif;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(28 95% 55%), hsl(38 95% 65%));
+  }
+
+  .bg-hero-overlay {
+    background: linear-gradient(180deg, hsla(220, 20%, 10%, 0.4) 0%, hsla(220, 20%, 10%, 0.85) 100%);
+  }
+
+  .bg-section-dark {
+    background: linear-gradient(180deg, hsl(220, 20%, 10%) 0%, hsl(220, 18%, 8%) 100%);
+  }
+
+  .glow-orange {
+    box-shadow: 0 0 30px -5px hsla(28, 95%, 55%, 0.4);
+  }
+}
