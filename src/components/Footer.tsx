@@ -1,6 +1,11 @@
 import { Link } from "react-router-dom";
-import { Phone, Mail, MapPin } from "lucide-react";
+import { Phone, Mail, MapPin, Facebook, Instagram } from "lucide-react";
 import { services } from "@/data/services";
+
+const socialLinks = [
+  { href: "https://facebook.com", icon: Facebook, label: "Facebook" },
+  { href: "https://instagram.com", icon: Instagram, label: "Instagram" },
+];
 
 const Footer = () => {
   return (
@@ -9,9 +14,23 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <div>
             <h3 className="text-2xl font-heading text-gradient mb-3">Metro Mobile Mechanic</h3>
-            <p className="text-muted-foreground text-sm font-body">
+            <p className="text-muted-foreground text-sm font-body mb-4">
               Professional mobile auto repair — we bring the shop to your driveway.
             </p>
+            <div className="flex gap-3">
+              {socialLinks.map(({ href, icon: Icon, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  <Icon className="h-5 w-5" />
+                </a>
+              ))}
+            </div>
           </div>
           <div>
             <h4 className="font-heading text-foreground uppercase tracking-wider mb-3">Quick Links</h4>
@@ -42,7 +61,7 @@ const Footer = () => {
             </ul>
           </div>
         </div>
-        <div className="mt-10 pt-6 border-t border-border space-y-1 text-center text-xs text-muted-foreground font-body">
+        <div className="mt-10 pt-6 border-t border-border space-y-3 text-center text-xs text-muted-foreground font-body">
           <p>© {new Date().getFullYear()} Metro Mobile Mechanic. All rights reserved.</p>
           <p>
             <Link to="/booking-policy" className="hover:text-primary transition-colors">Booking Policy</Link>
