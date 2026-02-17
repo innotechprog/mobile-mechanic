@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import SEOMeta from "@/components/SEOMeta";
 import HeroSection from "@/components/HeroSection";
 import ServicesSection from "@/components/ServicesSection";
 import WhyChooseUs from "@/components/WhyChooseUs";
@@ -9,6 +10,11 @@ import Footer from "@/components/Footer";
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
+      <SEOMeta
+        title="Metro Mobile Mechanic"
+        description="Professional mobile auto repair at your doorstep. Book oil changes, brake repair, battery service & diagnostics. We come to you — no tow truck needed."
+        canonical="/"
+      />
       <Navbar />
       <HeroSection />
       <ServicesSection />

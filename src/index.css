@@ -75,7 +75,12 @@
   }
 
   .bg-hero-overlay {
-    background: linear-gradient(180deg, hsla(220, 20%, 10%, 0.4) 0%, hsla(220, 20%, 10%, 0.85) 100%);
+    background: linear-gradient(
+      180deg,
+      hsla(220, 20%, 10%, 0.3) 0%,
+      hsla(220, 20%, 10%, 0.5) 40%,
+      hsla(220, 20%, 10%, 0.9) 100%
+    );
   }
 
   .bg-section-dark {

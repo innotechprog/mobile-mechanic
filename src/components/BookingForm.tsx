@@ -93,7 +93,7 @@ const BookingForm = () => {
               </div>
               <div>
                 <label className={labelClass}>Phone *</label>
-                <input name="phone" type="tel" value={formData.phone} onChange={handleChange} required placeholder="(555) 123-4567" className={inputClass} />
+                <input name="phone" type="tel" value={formData.phone} onChange={handleChange} required placeholder="076 253 8318" className={inputClass} />
               </div>
               <div className="md:col-span-2">
                 <label className={labelClass}>Service Address *</label>
