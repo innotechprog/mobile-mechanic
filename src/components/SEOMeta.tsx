@@ -5,7 +5,11 @@ interface SEOMetaProps {
   description: string;
   canonical?: string;
   ogImage?: string;
+  ogImageAlt?: string;
+  ogImageWidth?: number;
+  ogImageHeight?: number;
   ogType?: "website" | "article";
+  twitterCard?: "summary" | "summary_large_image";
 }
 
 const BASE_TITLE = "Metro Mobile Mechanic";
@@ -21,11 +25,26 @@ const ensureMeta = (attr: "name" | "property", key: string, content: string) => 
   el.setAttribute("content", content);
 };
 
-const SEOMeta = ({ title, description, canonical, ogImage, ogType = "website" }: SEOMetaProps) => {
+const DEFAULT_IMAGE = "/og-image.jpg";
+const DEFAULT_IMAGE_WIDTH = 1200;
+const DEFAULT_IMAGE_HEIGHT = 630;
+
+const SEOMeta = ({
+  title,
+  description,
+  canonical,
+  ogImage,
+  ogImageAlt,
+  ogImageWidth = DEFAULT_IMAGE_WIDTH,
+  ogImageHeight = DEFAULT_IMAGE_HEIGHT,
+  ogType = "website",
+  twitterCard = "summary_large_image",
+}: SEOMetaProps) => {
   const fullTitle = title === BASE_TITLE ? `${BASE_TITLE} — We Come To You` : `${title} | ${BASE_TITLE}`;
   const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
   const canonicalUrl = canonical ? `${baseUrl}${canonical}` : `${baseUrl}/`;
-  const imageUrl = ogImage?.startsWith("http") ? ogImage : ogImage ? `${baseUrl}${ogImage}` : undefined;
+  const imageUrl = ogImage?.startsWith("http") ? ogImage : ogImage ? `${baseUrl}${ogImage}` : `${baseUrl}${DEFAULT_IMAGE}`;
+  const imageAlt = ogImageAlt ?? "Metro Mobile Mechanic - Professional mobile auto repair";
 
   useEffect(() => {
     document.title = fullTitle;
@@ -34,7 +53,17 @@ const SEOMeta = ({ title, description, canonical, ogImage, ogType = "website" }:
     ensureMeta("property", "og:description", description);
     ensureMeta("property", "og:url", canonicalUrl);
     ensureMeta("property", "og:type", ogType);
-    if (imageUrl) ensureMeta("property", "og:image", imageUrl);
+    ensureMeta("property", "og:site_name", "Metro Mobile Mechanic");
+    ensureMeta("property", "og:locale", "en_AU");
+    ensureMeta("property", "og:image", imageUrl);
+    ensureMeta("property", "og:image:width", String(ogImageWidth));
+    ensureMeta("property", "og:image:height", String(ogImageHeight));
+    ensureMeta("property", "og:image:alt", imageAlt);
+    ensureMeta("name", "twitter:card", twitterCard);
+    ensureMeta("name", "twitter:title", fullTitle);
+    ensureMeta("name", "twitter:description", description);
+    ensureMeta("name", "twitter:image", imageUrl);
+    ensureMeta("name", "twitter:image:alt", imageAlt);
 
     let link = document.querySelector('link[rel="canonical"]');
     if (!link) {
@@ -47,7 +76,7 @@ const SEOMeta = ({ title, description, canonical, ogImage, ogType = "website" }:
     return () => {
       document.title = `${BASE_TITLE} — We Come To You`;
     };
-  }, [fullTitle, description, canonicalUrl, imageUrl, ogType]);
+  }, [fullTitle, description, canonicalUrl, imageUrl, imageAlt, ogType, ogImageWidth, ogImageHeight, twitterCard]);
 
   return null;
 };

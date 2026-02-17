@@ -21,6 +21,7 @@ const ServicePage = () => {
         description={service.longDescription}
         canonical={`/services/${service.slug}`}
         ogImage={service.image}
+        ogImageAlt={`${service.title} - Metro Mobile Mechanic`}
         ogType="article"
       />
       <Navbar />
