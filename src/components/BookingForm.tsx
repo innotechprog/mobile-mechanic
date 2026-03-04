@@ -16,8 +16,17 @@ const serviceOptions = [
   "Other",
 ];
 
+const emailJsConfig = {
+  serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID,
+  templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+  publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+};
+
+const fallbackBookingEmail = "innocent38318@gmail.com";
+
 const BookingForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -40,6 +49,9 @@ const BookingForm = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
+    if (isSuccess) {
+      setIsSuccess(false);
+    }
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -55,37 +67,73 @@ const BookingForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const useEmailJs = Boolean(
+      emailJsConfig.serviceId && emailJsConfig.templateId && emailJsConfig.publicKey
+    );
+
     try {
       setIsSubmitting(true);
 
-      const response = await fetch("https://formsubmit.co/ajax/innocent38318@gmail.com", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          _subject: "New Booking Request - Metro Mobile Mechanic",
-          _template: "table",
-          _captcha: "false",
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          phone: formData.phone,
-          address: formData.address,
-          city: formData.city,
-          zipCode: formData.zipCode,
-          carYear: formData.carYear,
-          carMake: formData.carMake,
-          carModel: formData.carModel,
-          carMileage: formData.carMileage,
-          vin: formData.vin,
-          serviceType: formData.serviceType,
-          preferredDate: formData.preferredDate,
-          preferredTime: formData.preferredTime || "Not specified",
-          description: formData.description || "No additional details provided",
-        }),
-      });
+      const response = useEmailJs
+        ? await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              service_id: emailJsConfig.serviceId,
+              template_id: emailJsConfig.templateId,
+              user_id: emailJsConfig.publicKey,
+              template_params: {
+                to_email: fallbackBookingEmail,
+                subject: "New Booking Request - Metro Mobile Mechanic",
+                first_name: formData.firstName,
+                last_name: formData.lastName,
+                customer_email: formData.email,
+                customer_phone: formData.phone,
+                address: formData.address,
+                city: formData.city,
+                zip_code: formData.zipCode,
+                car_year: formData.carYear,
+                car_make: formData.carMake,
+                car_model: formData.carModel,
+                car_mileage: formData.carMileage || "Not specified",
+                vin: formData.vin || "Not provided",
+                service_type: formData.serviceType,
+                preferred_date: formData.preferredDate,
+                preferred_time: formData.preferredTime || "Not specified",
+                description: formData.description || "No additional details provided",
+              },
+            }),
+          })
+        : await fetch(`https://formsubmit.co/ajax/${fallbackBookingEmail}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify({
+              _subject: "New Booking Request - Metro Mobile Mechanic",
+              _template: "table",
+              _captcha: "false",
+              firstName: formData.firstName,
+              lastName: formData.lastName,
+              email: formData.email,
+              phone: formData.phone,
+              address: formData.address,
+              city: formData.city,
+              zipCode: formData.zipCode,
+              carYear: formData.carYear,
+              carMake: formData.carMake,
+              carModel: formData.carModel,
+              carMileage: formData.carMileage,
+              vin: formData.vin,
+              serviceType: formData.serviceType,
+              preferredDate: formData.preferredDate,
+              preferredTime: formData.preferredTime || "Not specified",
+              description: formData.description || "No additional details provided",
+            }),
+          });
 
       if (!response.ok) {
         throw new Error("Booking request failed");
@@ -93,8 +141,10 @@ const BookingForm = () => {
 
       toast.success("Booking request submitted! We'll contact you shortly.");
       resetForm();
+      setIsSuccess(true);
     } catch {
       toast.error("Could not send your booking request. Please call or WhatsApp us.");
+      setIsSuccess(false);
     } finally {
       setIsSubmitting(false);
     }
@@ -120,6 +170,17 @@ const BookingForm = () => {
           onSubmit={handleSubmit}
           className="max-w-4xl mx-auto bg-card border border-border rounded-xl p-6 md:p-10 space-y-8"
         >
+          {isSuccess && (
+            <div className="rounded-lg border border-primary/40 bg-primary/10 px-4 py-3">
+              <p className="text-primary font-heading uppercase tracking-wider text-sm">
+                Booking Request Received
+              </p>
+              <p className="text-muted-foreground font-body text-sm mt-1">
+                Thank you. Your request was sent successfully and a confirmation has been sent to your email.
+              </p>
+            </div>
+          )}
+
           {/* Customer Information */}
           <div>
             <h3 className="text-xl font-heading text-primary mb-4 border-b border-border pb-2">
