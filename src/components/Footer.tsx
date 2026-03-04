@@ -66,7 +66,7 @@ const Footer = () => {
           <p>
             <Link to="/booking-policy" className="hover:text-primary transition-colors">Booking Policy</Link>
             {" · "}
-            Developed by <a href="https://ibinnovativesolutions.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">IB Innovative Solutions</a>
+            Developed by <a href="https://ib-innovativesolutions.com/it-solutions" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">IB Innovative Solutions</a>
           </p>
         </div>
       </div>
