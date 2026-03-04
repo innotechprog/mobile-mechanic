@@ -25,7 +25,7 @@ const ensureMeta = (attr: "name" | "property", key: string, content: string) => 
   el.setAttribute("content", content);
 };
 
-const DEFAULT_IMAGE = "/og-image.jpg";
+const DEFAULT_IMAGE = "/logo.png";
 const DEFAULT_IMAGE_WIDTH = 1200;
 const DEFAULT_IMAGE_HEIGHT = 630;
 
