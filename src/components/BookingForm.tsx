@@ -17,6 +17,7 @@ const serviceOptions = [
 ];
 
 const BookingForm = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -42,15 +43,61 @@ const BookingForm = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast.success("Booking request submitted! We'll contact you shortly.");
+  const resetForm = () => {
     setFormData({
       firstName: "", lastName: "", email: "", phone: "", address: "",
       city: "", zipCode: "", carYear: "", carMake: "", carModel: "",
       carMileage: "", vin: "", serviceType: "", preferredDate: "",
       preferredTime: "", description: "",
     });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      setIsSubmitting(true);
+
+      const response = await fetch("https://formsubmit.co/ajax/innocent38318@gmail.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          _subject: "New Booking Request - Metro Mobile Mechanic",
+          _template: "table",
+          _captcha: "false",
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+          city: formData.city,
+          zipCode: formData.zipCode,
+          carYear: formData.carYear,
+          carMake: formData.carMake,
+          carModel: formData.carModel,
+          carMileage: formData.carMileage,
+          vin: formData.vin,
+          serviceType: formData.serviceType,
+          preferredDate: formData.preferredDate,
+          preferredTime: formData.preferredTime || "Not specified",
+          description: formData.description || "No additional details provided",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Booking request failed");
+      }
+
+      toast.success("Booking request submitted! We'll contact you shortly.");
+      resetForm();
+    } catch {
+      toast.error("Could not send your booking request. Please call or WhatsApp us.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const inputClass =
@@ -93,7 +140,7 @@ const BookingForm = () => {
               </div>
               <div>
                 <label className={labelClass}>Phone *</label>
-                <input name="phone" type="tel" value={formData.phone} onChange={handleChange} required placeholder="076 253 8318" className={inputClass} />
+                <input name="phone" type="tel" value={formData.phone} onChange={handleChange} required placeholder="+27 73 269 6847" className={inputClass} />
               </div>
               <div className="md:col-span-2">
                 <label className={labelClass}>Service Address *</label>
@@ -183,9 +230,10 @@ const BookingForm = () => {
 
           <button
             type="submit"
+            disabled={isSubmitting}
             className="w-full bg-primary text-primary-foreground font-heading text-lg uppercase tracking-wider py-4 rounded-md hover:opacity-90 transition-opacity glow-orange"
           >
-            Submit Booking Request
+            {isSubmitting ? "Sending..." : "Submit Booking Request"}
           </button>
         </form>
       </div>

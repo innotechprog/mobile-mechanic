@@ -49,7 +49,7 @@ const BookingPolicy = () => {
     {
       title: "Contact",
       content: [
-        "Questions about our booking policy? Call us at 076 253 8318 or email info@metromobilemechanic.com. We're here to help.",
+        "Questions about our booking policy? Call us at +27 73 269 6847 or email info@metromobilemechanic.com. We're here to help.",
       ],
     },
   ];

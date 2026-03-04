@@ -61,27 +61,10 @@ const ServicePage = () => {
 
               <div>
                 <h2 className="text-xl font-heading text-foreground mb-4">
-                  What's Included
+                  Sub-Services
                 </h2>
                 <ul className="space-y-2">
-                  {service.includes.map((item) => (
-                    <li
-                      key={item}
-                      className="flex items-start gap-2 text-muted-foreground font-body"
-                    >
-                      <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div>
-                <h2 className="text-xl font-heading text-foreground mb-4">
-                  Benefits
-                </h2>
-                <ul className="space-y-2">
-                  {service.benefits.map((item) => (
+                  {service.subServices.map((item) => (
                     <li
                       key={item}
                       className="flex items-start gap-2 text-muted-foreground font-body"
@@ -101,7 +84,7 @@ const ServicePage = () => {
                   Book {service.title}
                 </Link>
                 <a
-                  href="tel:0762538318"
+                  href="tel:+27732696847"
                   className="inline-flex items-center justify-center gap-2 border-2 border-border text-foreground font-heading text-lg uppercase tracking-wider px-8 py-4 rounded-md hover:bg-secondary hover:border-primary/50 transition-all"
                 >
                   <Phone className="w-5 h-5" />

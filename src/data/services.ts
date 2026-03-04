@@ -2,6 +2,7 @@ import serviceBrakes from "@/assets/service-brakes.jpg";
 import serviceOil from "@/assets/service-oil.jpg";
 import serviceBattery from "@/assets/service-battery.jpg";
 import serviceDiagnostics from "@/assets/service-diagnostics.jpg";
+import serviceMechanical from "@/assets/service-mechanical.png";
 
 export interface Service {
   slug: string;
@@ -9,93 +10,81 @@ export interface Service {
   description: string;
   image: string;
   longDescription: string;
-  benefits: string[];
-  includes: string[];
+  subServices: string[];
 }
 
 export const services: Service[] = [
   {
-    slug: "oil-change",
-    title: "Oil Change",
-    description: "Full synthetic & conventional oil changes with filter replacement.",
+    slug: "car-servicing",
+    title: "Car Servicing",
+    description: "Scheduled servicing and inspections to keep your vehicle performing at its best.",
     image: serviceOil,
     longDescription:
-      "Keep your engine running smoothly with our professional mobile oil change service. We come to your home or office with everything needed for a complete oil change. Using quality oils and OEM-compatible filters, we'll have your vehicle back on the road in no time.",
-    benefits: [
-      "Extends engine life and prevents costly repairs",
-      "Improves fuel efficiency and performance",
-      "Reduces harmful emissions",
-      "Convenient — no need to visit a shop or wait",
-    ],
-    includes: [
-      "Drain and replace engine oil",
-      "Replace oil filter",
-      "Full synthetic, synthetic blend, or conventional options",
-      "Multi-point fluid level check",
-      "Proper disposal of used oil",
+      "Our car servicing category covers routine maintenance and inspections completed at your location by qualified mobile mechanics.",
+    subServices: [
+      "Minor Service",
+      "Major Service",
+      "Oil & Filter Change",
+      "Full Service Inspection",
     ],
   },
   {
     slug: "brake-repair",
     title: "Brake Repair",
-    description: "Pads, rotors, calipers — complete brake service at your location.",
+    description: "Professional brake system repair and replacement for safe stopping performance.",
     image: serviceBrakes,
     longDescription:
-      "Your safety is our priority. Our certified mechanics perform complete brake services at your location — from simple pad replacements to full brake system overhauls. We carry quality parts and have the expertise to get your brakes performing like new.",
-    benefits: [
-      "Restored stopping power and safety",
-      "Prevents costly rotor damage from worn pads",
-      "Smooth, quiet braking",
-      "Same-day service available",
-    ],
-    includes: [
-      "Brake pad replacement (front and/or rear)",
-      "Rotor resurfacing or replacement",
-      "Caliper service and repair",
-      "Brake fluid inspection and flush",
-      "Complete brake system inspection",
+      "Our brake repair category focuses on inspections, component replacement, and system servicing to keep your braking reliable.",
+    subServices: [
+      "Brake Inspection",
+      "Brake Pads Replacement",
+      "Brake Disc / Rotor Replacement",
+      "Brake Caliper Service",
     ],
   },
   {
-    slug: "battery-service",
-    title: "Battery Service",
-    description: "Testing, jump starts, and battery replacement on the spot.",
+    slug: "auto-electrical-battery",
+    title: "Auto Electrical & Battery",
+    description: "Battery and auto electrical diagnostics, testing, and repairs at your location.",
     image: serviceBattery,
     longDescription:
-      "Dead battery? No problem. We'll come to you for jump starts, battery testing, and replacement. Our mobile service includes load testing to ensure your battery is healthy, and we can install a new one on the spot if needed.",
-    benefits: [
-      "No need to call a tow truck",
-      "Quick jump starts when you're stranded",
-      "Accurate battery testing and diagnostics",
-      "Quality replacement batteries in stock",
-    ],
-    includes: [
-      "Jump start service",
-      "Battery load testing",
-      "Terminal cleaning and inspection",
-      "Battery replacement and installation",
-      "Alternator and charging system check",
+      "Our auto electrical and battery category covers starting, charging, and electrical fault diagnosis with on-site repair support.",
+    subServices: [
+      "Battery Testing",
+      "Battery Replacement",
+      "Car Not Starting Inspection",
+      "Alternator Checks",
+      "Starter Motor Checks",
+      "General Auto Electrical Repairs",
     ],
   },
   {
     slug: "diagnostics",
     title: "Diagnostics",
-    description: "Full computer diagnostics to find and fix the problem fast.",
+    description: "Accurate inspections and fault detection to identify issues before major repairs.",
     image: serviceDiagnostics,
     longDescription:
-      "Check engine light on? Strange noises or performance issues? Our mobile diagnostic service uses professional-grade scanners to read your vehicle's computer and identify the root cause. We'll explain the findings and provide options to get you back on the road.",
-    benefits: [
-      "Pinpoint exact problems quickly",
-      "Avoid unnecessary repairs and guesswork",
-      "Save time — no multiple trips to the shop",
-      "Transparent pricing and explanations",
+      "Our diagnostics category uses professional testing and inspection workflows to identify faults quickly and clearly.",
+    subServices: [
+      "Dash Warning Light Inspection",
+      "Engine Diagnostics",
+      "Sound / Noise Inspection",
+      "Pre-Purchase Car Inspection",
+      "Fault Code Scanning",
     ],
-    includes: [
-      "OBD-II scan and code retrieval",
-      "Live data stream analysis",
-      "Battery and charging system test",
-      "Emissions readiness check",
-      "Detailed report and repair recommendations",
+  },
+  {
+    slug: "mechanical-repairs",
+    title: "Mechanical Repairs",
+    description: "Clutch, gearbox, bearings, engine overhauls and more.",
+    image: serviceMechanical,
+    longDescription:
+      "Our mechanical repairs category covers major mechanical components and complex repair work completed by experienced technicians.",
+    subServices: [
+      "Clutch Repairs",
+      "Gearbox Repairs",
+      "Wheel Bearing Repairs",
+      "Engine Overhaul Service",
     ],
   },
 ];

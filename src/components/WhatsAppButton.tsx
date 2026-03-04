@@ -1,4 +1,4 @@
-const WHATSAPP_NUMBER = "61762538318";
+const WHATSAPP_NUMBER = "27732696847";
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg

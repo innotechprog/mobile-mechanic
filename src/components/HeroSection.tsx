@@ -30,7 +30,7 @@ const HeroSection = () => {
               Book a Service
             </a>
             <a
-              href="tel:0762538318"
+              href="tel:+27732696847"
               className="inline-flex items-center justify-center gap-2 border-2 border-border text-foreground font-heading text-base sm:text-lg uppercase tracking-wider px-6 py-3.5 sm:px-8 sm:py-4 rounded-md hover:bg-secondary hover:border-primary/50 transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
             >
               <Phone className="w-5 h-5 shrink-0" />

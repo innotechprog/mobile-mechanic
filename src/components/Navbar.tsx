@@ -18,9 +18,8 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
-        <Link to="/" className="font-heading text-xl uppercase tracking-wider">
-          <span className="text-gradient">Metro</span>{" "}
-          <span className="text-foreground">Mobile Mechanic</span>
+        <Link to="/" className="inline-flex items-center" aria-label="Metro Mobile Mechanic Home">
+          <img src="/logo.png" alt="Metro Mobile Mechanic" className="h-10 w-auto" />
         </Link>
 
         {/* Desktop */}
@@ -56,7 +55,7 @@ const Navbar = () => {
             About
           </Link>
           <a
-            href="tel:0762538318"
+            href="tel:+27732696847"
             className="inline-flex items-center gap-2 bg-primary text-foreground font-heading text-sm uppercase tracking-wider px-5 py-2 rounded-md hover:opacity-90 transition-opacity"
           >
             <Phone className="w-4 h-4" /> Call Us
@@ -103,7 +102,7 @@ const Navbar = () => {
           <Link to="/about" onClick={() => setOpen(false)} className={`block ${navLinkClass}`}>
             About
           </Link>
-          <a href="tel:0762538318" className="inline-flex items-center gap-2 bg-primary text-foreground font-heading text-sm uppercase tracking-wider px-5 py-2 rounded-md">
+          <a href="tel:+27732696847" className="inline-flex items-center gap-2 bg-primary text-foreground font-heading text-sm uppercase tracking-wider px-5 py-2 rounded-md">
             <Phone className="w-4 h-4" /> Call Us
           </a>
         </div>

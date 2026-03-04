@@ -14,20 +14,21 @@ const ServicesSection = () => {
             Our <span className="text-gradient">Services</span>
           </h2>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
           {services.map((service) => (
             <Link
               key={service.slug}
               to={`/services/${service.slug}`}
               className="group bg-card rounded-lg overflow-hidden border border-border hover:border-primary/50 transition-colors block"
             >
-              <div className="aspect-square overflow-hidden">
+              <div className="aspect-square overflow-hidden relative">
                 <img
                   src={service.image}
                   alt={service.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
                 />
+                <div className="absolute inset-0 bg-hero-overlay pointer-events-none" />
               </div>
               <div className="p-5">
                 <h3 className="text-xl font-heading text-foreground mb-1 group-hover:text-primary transition-colors">

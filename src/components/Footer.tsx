@@ -55,7 +55,7 @@ const Footer = () => {
           <div>
             <h4 className="font-heading text-foreground uppercase tracking-wider mb-3">Contact</h4>
             <ul className="space-y-2 text-sm text-muted-foreground font-body">
-              <li className="flex items-center gap-2"><Phone className="w-4 h-4 text-primary" /> 076 253 8318</li>
+              <li className="flex items-center gap-2"><Phone className="w-4 h-4 text-primary" /> +27 73 269 6847</li>
               <li className="flex items-center gap-2"><Mail className="w-4 h-4 text-primary" /> info@metromobilemechanic.com</li>
               <li className="flex items-center gap-2"><MapPin className="w-4 h-4 text-primary" /> Serving the entire metro area</li>
             </ul>

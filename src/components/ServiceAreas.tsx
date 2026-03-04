@@ -2,25 +2,8 @@ import { MapPin } from "lucide-react";
 
 const areas = [
   "Johannesburg",
-  "Pretoria",
   "Sandton",
-  "Midrand",
-  "Centurion",
-  "Soweto",
-  "Randburg",
-  "Roodepoort",
-  "Benoni",
-  "Boksburg",
-  "Germiston",
-  "Alberton",
-  "Kempton Park",
-  "Edenvale",
-  "Krugersdorp",
-  "Vereeniging",
-  "Vanderbijlpark",
-  "Springs",
-  "Fourways",
-  "Bryanston",
+  "Pretoria",
 ];
 
 const ServiceAreas = () => {
@@ -28,17 +11,15 @@ const ServiceAreas = () => {
     <section className="py-20 bg-card">
       <div className="container mx-auto px-4">
         <div className="text-center mb-14">
-          <p className="text-primary font-heading tracking-widest uppercase text-sm mb-2">
-            Covering All of Gauteng
-          </p>
+          <p className="text-primary font-heading tracking-widest uppercase text-sm mb-2">Our Service Areas</p>
           <h2 className="text-4xl md:text-5xl font-heading">
             Areas We <span className="text-gradient">Serve</span>
           </h2>
           <p className="text-muted-foreground font-body mt-4 max-w-xl mx-auto">
-            We travel across Gauteng to get your car running — no matter where you are.
+            We currently service Johannesburg, Sandton, and Pretoria.
           </p>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {areas.map((area) => (
             <div
               key={area}

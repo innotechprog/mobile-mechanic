@@ -72,8 +72,8 @@ const About = () => {
                   Book a service
                 </Link>{" "}
                 or call us at{" "}
-                <a href="tel:0762538318" className="text-primary hover:underline font-medium">
-                  076 253 8318
+                <a href="tel:+27732696847" className="text-primary hover:underline font-medium">
+                  +27 73 269 6847
                 </a>
                 .
               </p>
