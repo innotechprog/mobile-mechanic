@@ -9,7 +9,6 @@ import About from "./pages/About";
 import BookingPolicy from "./pages/BookingPolicy";
 import NotFound from "./pages/NotFound";
 import WhatsAppButton from "./components/WhatsAppButton";
-import GoodFridayPopup from "./components/GoodFridayPopup";
 import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
@@ -21,7 +20,6 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <ScrollToTop />
-        <GoodFridayPopup />
         <WhatsAppButton />
         <Routes>
           <Route path="/" element={<Index />} />
