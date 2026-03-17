@@ -13,7 +13,7 @@ const NotFound = () => {
     <div className="flex min-h-screen items-center justify-center bg-muted">
       <SEOMeta
         title="Page Not Found"
-        description="The page you're looking for doesn't exist. Return to Metro Mobile Mechanic for professional mobile auto repair."
+        description="The page you're looking for doesn't exist. Return to Metro Mobile Mechanics for professional mobile auto repair."
       />
       <div className="text-center">
         <h1 className="mb-4 text-4xl font-bold">404</h1>

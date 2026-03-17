@@ -7,7 +7,7 @@ const HeroSection = () => {
     <section className="relative min-h-screen flex items-center pt-24 pb-16 md:pt-28 md:pb-20">
       <img
         src={heroImage}
-        alt="Metro Mobile Mechanic working on a car"
+        alt="Metro Mobile Mechanics working on a car"
         className="absolute inset-0 w-full h-full object-cover object-center"
       />
       <div className="absolute inset-0 bg-hero-overlay" />
@@ -18,7 +18,7 @@ const HeroSection = () => {
           </p>
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-heading leading-tight mb-5 md:mb-6">
             Metro Mobile{" "}
-            <span className="text-gradient">Mechanic</span>
+            <span className="text-gradient">Mechanics</span>
           </h1>
           <p className="text-muted-foreground text-base sm:text-lg md:text-xl mb-6 md:mb-8 max-w-xl font-body leading-relaxed">
             Professional auto repair at your doorstep. No tow truck needed — our certified mechanics bring the shop to you.

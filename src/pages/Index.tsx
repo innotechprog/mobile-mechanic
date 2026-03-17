@@ -11,7 +11,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOMeta
-        title="Metro Mobile Mechanic"
+        title="Metro Mobile Mechanics"
         description="Professional mobile auto repair at your doorstep. Book oil changes, brake repair, battery service & diagnostics. We come to you — no tow truck needed."
         canonical="/"
       />

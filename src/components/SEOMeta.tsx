@@ -12,7 +12,7 @@ interface SEOMetaProps {
   twitterCard?: "summary" | "summary_large_image";
 }
 
-const BASE_TITLE = "Metro Mobile Mechanic";
+const BASE_TITLE = "Metro Mobile Mechanics";
 
 const ensureMeta = (attr: "name" | "property", key: string, content: string) => {
   const selector = `meta[${attr}="${key}"]`;
@@ -44,7 +44,7 @@ const SEOMeta = ({
   const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
   const canonicalUrl = canonical ? `${baseUrl}${canonical}` : `${baseUrl}/`;
   const imageUrl = ogImage?.startsWith("http") ? ogImage : ogImage ? `${baseUrl}${ogImage}` : `${baseUrl}${DEFAULT_IMAGE}`;
-  const imageAlt = ogImageAlt ?? "Metro Mobile Mechanic - Professional mobile auto repair";
+  const imageAlt = ogImageAlt ?? "Metro Mobile Mechanics - Professional mobile auto repair";
 
   useEffect(() => {
     document.title = fullTitle;
@@ -53,7 +53,7 @@ const SEOMeta = ({
     ensureMeta("property", "og:description", description);
     ensureMeta("property", "og:url", canonicalUrl);
     ensureMeta("property", "og:type", ogType);
-    ensureMeta("property", "og:site_name", "Metro Mobile Mechanic");
+    ensureMeta("property", "og:site_name", "Metro Mobile Mechanics");
     ensureMeta("property", "og:locale", "en_AU");
     ensureMeta("property", "og:image", imageUrl);
     ensureMeta("property", "og:image:width", String(ogImageWidth));

@@ -9,7 +9,7 @@ const About = () => {
     <div className="min-h-screen bg-background">
       <SEOMeta
         title="About Us"
-        description="Metro Mobile Mechanic brings professional auto repair to your doorstep. Learn about our certified mechanics, commitment to quality, and the metro area we serve."
+        description="Metro Mobile Mechanics brings professional auto repair to your doorstep. Learn about our certified mechanics, commitment to quality, and the metro area we serve."
         canonical="/about"
       />
       <Navbar />
@@ -29,10 +29,10 @@ const About = () => {
                 Who We Are
               </p>
               <h1 className="text-4xl md:text-5xl font-heading mb-6">
-                About <span className="text-gradient">Metro Mobile Mechanic</span>
+                About <span className="text-gradient">Metro Mobile Mechanics</span>
               </h1>
               <p className="text-muted-foreground font-body text-lg leading-relaxed">
-                Metro Mobile Mechanic was founded on a simple idea: car repairs shouldn&apos;t require a tow truck, 
+                Metro Mobile Mechanics was founded on a simple idea: car repairs shouldn&apos;t require a tow truck, 
                 a day off work, or hours spent in a waiting room. We bring the shop to you — whether you&apos;re at 
                 home, the office, or on the road.
               </p>

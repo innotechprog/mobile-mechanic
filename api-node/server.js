@@ -45,10 +45,10 @@ const requiredFields = ["firstName", "lastName", "email", "phone", "serviceType"
 const BUSINESS_CELLPHONE = "+27 73 269 6847";
 
 const getConfig = () => {
-  const host = process.env.EMAIL_HOST || "mail.metromobilemechanics.co.za";
+  const host = process.env.EMAIL_HOST || "";
   const port = Number(process.env.EMAIL_PORT || 587);
-  const user = process.env.EMAIL_USER || "noreply@metromobilemechanics.co.za";
-  const pass = process.env.EMAIL_PASSWORD || "6TsfiDx#lxIlb5%n";
+  const user = process.env.EMAIL_USER || "";
+  const pass = process.env.EMAIL_PASSWORD || "";
   const encryption = (process.env.EMAIL_ENCRYPTION || "tls").toLowerCase();
 
   return {

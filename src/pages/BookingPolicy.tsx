@@ -49,7 +49,7 @@ const BookingPolicy = () => {
     {
       title: "Contact",
       content: [
-        "Questions about our booking policy? Call us at +27 73 269 6847 or email info@metromobilemechanic.com. We're here to help.",
+        "Questions about our booking policy? Call us at +27 73 269 6847 or email info@metromobilemechanics.co.za. We're here to help.",
       ],
     },
   ];
@@ -58,7 +58,7 @@ const BookingPolicy = () => {
     <div className="min-h-screen bg-background">
       <SEOMeta
         title="Booking Policy"
-        description="Read our booking, cancellation, payment, and service policies. Metro Mobile Mechanic — transparent and hassle-free mobile auto repair."
+        description="Read our booking, cancellation, payment, and service policies. Metro Mobile Mechanics — transparent and hassle-free mobile auto repair."
         canonical="/booking-policy"
       />
       <Navbar />
