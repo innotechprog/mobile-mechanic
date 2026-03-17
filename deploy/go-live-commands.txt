@@ -1,0 +1,42 @@
+# 1) Upload built frontend from local machine (includes /api/send-booking.php)
+scp -r dist/. root@72.62.31.228:/var/www/metromobilemechanics.co.za/
+
+# 2) SSH to server
+ssh root@72.62.31.228
+
+# 3) Ensure Apache + PHP are installed and enabled
+# Example (Ubuntu): apt install apache2 php libapache2-mod-php
+
+# 4A) Apache setup (if using Apache)
+# Copy deploy/apache-vhost.conf content to your vhost file, then:
+a2enmod rewrite headers ssl
+a2ensite metromobilemechanics.co.za.conf
+systemctl reload apache2
+
+# 4B) Nginx setup (if using Nginx)
+# Copy deploy/nginx-site.conf to /etc/nginx/sites-available/metromobilemechanics.co.za
+ln -s /etc/nginx/sites-available/metromobilemechanics.co.za /etc/nginx/sites-enabled/metromobilemechanics.co.za
+nginx -t
+systemctl reload nginx
+
+# 5) Verify public API route through domain
+curl -i -X POST https://metromobilemechanics.co.za/api/send-booking.php \
+	-H "Content-Type: application/json" \
+	-d '{"firstName":"A","lastName":"B","email":"test@example.com","phone":"123","serviceType":"Minor Service","preferredDate":"2026-03-10"}'
+
+# 6) If response shows php_mail_failed, configure SMTP via API-local env file
+cat >/var/www/metromobilemechanics.co.za/api/.env <<'EOF'
+EMAIL_HOST=mail.metromobilemechanics.co.za
+EMAIL_PORT=587
+EMAIL_USER=noreply@metromobilemechanics.co.za
+EMAIL_PASSWORD=your_real_smtp_password
+EMAIL_ENCRYPTION=tls
+FROM_EMAIL=noreply@metromobilemechanics.co.za
+FROM_NAME="Metro Mobile Mechanics"
+BOOKING_TO_EMAIL=bookings@metromobilemechanics.co.za
+APP_DEBUG=1
+EOF
+
+# 7) Lock file permissions for secrets
+chown www-data:www-data /var/www/metromobilemechanics.co.za/api/.env
+chmod 640 /var/www/metromobilemechanics.co.za/api/.env

@@ -1,8 +1,8 @@
-import serviceBrakes from "@/assets/service-brakes.jpg";
-import serviceOil from "@/assets/service-oil.jpg";
-import serviceBattery from "@/assets/service-battery.jpg";
-import serviceDiagnostics from "@/assets/service-diagnostics.jpg";
-import serviceMechanical from "@/assets/service-mechanical.png";
+import serviceBrakes from "@/assets/brakes.jpeg";
+import serviceOil from "@/assets/oil-change.jpeg";
+import serviceBattery from "@/assets/battery-test.jpeg";
+import serviceDiagnostics from "@/assets/diagnostic.jpeg";
+import serviceMechanical from "@/assets/engine1.jpeg";
 
 export interface Service {
   slug: string;

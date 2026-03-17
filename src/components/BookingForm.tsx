@@ -1,28 +1,46 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { services } from "@/data/services";
 
 const currentYear = new Date().getFullYear();
 const years = Array.from({ length: 35 }, (_, i) => currentYear - i);
 
-const serviceOptions = [
-  "Oil Change",
-  "Brake Repair",
-  "Battery Service",
-  "Engine Diagnostics",
-  "Tire Service",
-  "Tune-Up",
-  "AC / Heating",
-  "Electrical Repair",
-  "Other",
-];
+const serviceGroups = services.map((service) => ({
+  category: service.title,
+  options: service.subServices,
+}));
 
-const emailJsConfig = {
-  serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID,
-  templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-  publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+const envBookingApi = import.meta.env.VITE_BOOKING_API_URL as string | undefined;
+
+const normalizePath = (path: string) => path.replace(/\/+/g, '/').replace(/\/$/, '');
+
+const getBookingApiCandidates = () => {
+  const candidates: string[] = [];
+
+  if (envBookingApi && envBookingApi.trim()) {
+    candidates.push(envBookingApi.trim());
+  }
+
+  const base = normalizePath(import.meta.env.BASE_URL || '/');
+  const basePath = base === '' ? '' : base;
+  candidates.push(`${basePath}/api/send-booking.php`.replace(/\/+/g, '/'));
+  candidates.push('/api/send-booking.php');
+  candidates.push(`${basePath}/send-booking.php`.replace(/\/+/g, '/'));
+  candidates.push('/send-booking.php');
+  candidates.push(`${basePath}/api/send-booking`.replace(/\/+/g, '/'));
+  candidates.push('/api/send-booking');
+
+  // Keep order while removing duplicates.
+  return [...new Set(candidates)];
 };
 
-const fallbackBookingEmail = "innocent38318@gmail.com";
+const getTodayIsoDate = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = `${now.getMonth() + 1}`.padStart(2, "0");
+  const day = `${now.getDate()}`.padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
 
 const BookingForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -67,83 +85,57 @@ const BookingForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const useEmailJs = Boolean(
-      emailJsConfig.serviceId && emailJsConfig.templateId && emailJsConfig.publicKey
-    );
-
     try {
       setIsSubmitting(true);
 
-      const response = useEmailJs
-        ? await fetch("https://api.emailjs.com/api/v1.0/email/send", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              service_id: emailJsConfig.serviceId,
-              template_id: emailJsConfig.templateId,
-              user_id: emailJsConfig.publicKey,
-              template_params: {
-                to_email: fallbackBookingEmail,
-                subject: "New Booking Request - Metro Mobile Mechanic",
-                first_name: formData.firstName,
-                last_name: formData.lastName,
-                customer_email: formData.email,
-                customer_phone: formData.phone,
-                address: formData.address,
-                city: formData.city,
-                zip_code: formData.zipCode,
-                car_year: formData.carYear,
-                car_make: formData.carMake,
-                car_model: formData.carModel,
-                car_mileage: formData.carMileage || "Not specified",
-                vin: formData.vin || "Not provided",
-                service_type: formData.serviceType,
-                preferred_date: formData.preferredDate,
-                preferred_time: formData.preferredTime || "Not specified",
-                description: formData.description || "No additional details provided",
-              },
-            }),
-          })
-        : await fetch(`https://formsubmit.co/ajax/${fallbackBookingEmail}`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-            body: JSON.stringify({
-              _subject: "New Booking Request - Metro Mobile Mechanic",
-              _template: "table",
-              _captcha: "false",
-              firstName: formData.firstName,
-              lastName: formData.lastName,
-              email: formData.email,
-              phone: formData.phone,
-              address: formData.address,
-              city: formData.city,
-              zipCode: formData.zipCode,
-              carYear: formData.carYear,
-              carMake: formData.carMake,
-              carModel: formData.carModel,
-              carMileage: formData.carMileage,
-              vin: formData.vin,
-              serviceType: formData.serviceType,
-              preferredDate: formData.preferredDate,
-              preferredTime: formData.preferredTime || "Not specified",
-              description: formData.description || "No additional details provided",
-            }),
+      const today = getTodayIsoDate();
+      if (formData.preferredDate < today) {
+        throw new Error("Preferred date cannot be in the past.");
+      }
+
+      const endpoints = getBookingApiCandidates();
+      let lastErrorMessage = 'Booking request failed';
+      let submitted = false;
+
+      for (const endpoint of endpoints) {
+        try {
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData),
           });
 
-      if (!response.ok) {
-        throw new Error("Booking request failed");
+          const rawText = await response.text();
+          let result: { success?: boolean; message?: string } | null = null;
+
+          try {
+            result = rawText ? JSON.parse(rawText) : null;
+          } catch {
+            // Ignore parse errors; the HTTP status below still drives fallback/error handling.
+          }
+
+          if (!response.ok || !result?.success) {
+            lastErrorMessage = result?.message || `Request failed (${response.status})`;
+            continue;
+          }
+
+          submitted = true;
+          break;
+        } catch {
+          lastErrorMessage = `Could not reach booking endpoint: ${endpoint}`;
+        }
+      }
+
+      if (!submitted) {
+        throw new Error(lastErrorMessage);
       }
 
       toast.success("Booking request submitted! We'll contact you shortly.");
       resetForm();
       setIsSuccess(true);
-    } catch {
-      toast.error("Could not send your booking request. Please call or WhatsApp us.");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Booking request failed';
+      toast.error(message || "Could not send your booking request. Please call or WhatsApp us.");
       setIsSuccess(false);
     } finally {
       setIsSubmitting(false);
@@ -176,7 +168,7 @@ const BookingForm = () => {
                 Booking Request Received
               </p>
               <p className="text-muted-foreground font-body text-sm mt-1">
-                Thank you. Your request was sent successfully and a confirmation has been sent to your email.
+                Thank you. Your request was sent successfully, a confirmation was emailed, and a quote will be sent shortly.
               </p>
             </div>
           )}
@@ -262,14 +254,19 @@ const BookingForm = () => {
                 <label className={labelClass}>Service Type *</label>
                 <select name="serviceType" value={formData.serviceType} onChange={handleChange} required className={inputClass}>
                   <option value="">Select Service</option>
-                  {serviceOptions.map((s) => (
-                    <option key={s} value={s}>{s}</option>
+                  {serviceGroups.map((group) => (
+                    <optgroup key={group.category} label={group.category}>
+                      {group.options.map((serviceName) => (
+                        <option key={serviceName} value={serviceName}>{serviceName}</option>
+                      ))}
+                    </optgroup>
                   ))}
+                  <option value="Other">Other</option>
                 </select>
               </div>
               <div>
                 <label className={labelClass}>Preferred Date *</label>
-                <input name="preferredDate" type="date" value={formData.preferredDate} onChange={handleChange} required className={inputClass} />
+                <input name="preferredDate" type="date" value={formData.preferredDate} onChange={handleChange} min={getTodayIsoDate()} required className={inputClass} />
               </div>
               <div>
                 <label className={labelClass}>Preferred Time</label>

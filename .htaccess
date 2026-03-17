@@ -1,0 +1,14 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Keep backend API endpoints untouched.
+  RewriteRule ^api/ - [L]
+
+  # Serve existing files/directories directly.
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # SPA fallback so deep links like /services/<slug> resolve correctly.
+  RewriteRule ^ index.html [L]
+</IfModule>
