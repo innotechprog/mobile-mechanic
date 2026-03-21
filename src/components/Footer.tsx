@@ -30,25 +30,6 @@ const Footer = () => {
             <p className="text-muted-foreground text-sm font-body mb-4">
               Professional mobile auto repair — we bring the shop to your driveway.
             </p>
-            <div className="mb-4 space-y-1 text-sm text-muted-foreground font-body">
-              <h4 className="font-heading text-foreground uppercase tracking-wider mb-3">Banking Details</h4>
-              <p>Bank Name: Capitec</p>
-              <p>
-                Account no:{" "}
-                <button
-                  type="button"
-                  onClick={handleCopyAccountNumber}
-                  className="text-left transition-colors hover:text-foreground"
-                  aria-label="Copy account number"
-                  title="Copy account number"
-                >
-                  1054973130
-                </button>
-              </p>
-              <p>Account Holder: Metro Mobile Mechanics</p>
-              <p>branch code: 450105</p>
-              {copied ? <p className="text-primary">Account number copied.</p> : null}
-            </div>
             <div className="flex gap-3">
               {socialLinks.map(({ href, icon: Icon, label }) => (
                 <a
@@ -91,6 +72,25 @@ const Footer = () => {
               <li className="flex items-center gap-2"><Mail className="w-4 h-4 text-primary" /> info@metromobilemechanics.co.za</li>
               <li className="flex items-center gap-2"><MapPin className="w-4 h-4 text-primary" /> Serving the entire metro area</li>
             </ul>
+            <div className="mt-5 space-y-1 text-sm text-muted-foreground font-body">
+              <h4 className="font-heading text-foreground uppercase tracking-wider mb-3">Banking Details</h4>
+              <p>Bank Name: Capitec</p>
+              <p>
+                Account no:{" "}
+                <button
+                  type="button"
+                  onClick={handleCopyAccountNumber}
+                  className="text-left transition-colors hover:text-foreground"
+                  aria-label="Copy account number"
+                  title="Copy account number"
+                >
+                  1054973130
+                </button>
+              </p>
+              <p>Account Holder: Metro Mobile Mechanics</p>
+              <p>Branch Code: 450105</p>
+              {copied ? <p className="text-primary">Account number copied.</p> : null}
+            </div>
           </div>
         </div>
         <div className="mt-10 pt-6 border-t border-border space-y-3 text-center text-xs text-muted-foreground font-body">

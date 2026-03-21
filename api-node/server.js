@@ -1,4 +1,5 @@
 import cors from "cors";
+import crypto from "crypto";
 import dotenv from "dotenv";
 import express from "express";
 import nodemailer from "nodemailer";
@@ -43,6 +44,24 @@ app.use(express.json({ limit: "1mb" }));
 
 const requiredFields = ["firstName", "lastName", "email", "phone", "serviceType", "preferredDate"];
 const BUSINESS_CELLPHONE = "+27 73 269 6847";
+const QUOTE_BOOKING_FIELDS = [
+  "firstName",
+  "lastName",
+  "email",
+  "phone",
+  "address",
+  "city",
+  "zipCode",
+  "carYear",
+  "carMake",
+  "carModel",
+  "carMileage",
+  "vin",
+  "serviceType",
+  "preferredDate",
+  "preferredTime",
+  "description",
+];
 
 const getConfig = () => {
   const host = process.env.EMAIL_HOST || "";
@@ -62,6 +81,10 @@ const getConfig = () => {
     fromName: process.env.FROM_NAME || "Metro Mobile Mechanics",
     bookingToEmail: process.env.BOOKING_TO_EMAIL || "bookings@metromobilemechanics.co.za",
     bookingToName: process.env.BOOKING_TO_NAME || "Metro Mobile Mechanics - Bookings",
+    quoteLinkSecret:
+      process.env.QUOTE_LINK_SECRET || process.env.EMAIL_PASSWORD || "metro-mobile-quote-fallback-secret",
+    quoteLinkBaseUrl: process.env.QUOTE_LINK_BASE_URL || "",
+    quoteLinkTtlMinutes: Number(process.env.QUOTE_LINK_TTL_MINUTES || 1440),
     appDebug: process.env.APP_DEBUG === "1",
   };
 };
@@ -76,7 +99,73 @@ const esc = (value, fallback = "") => {
     .replace(/'/g, "&#039;");
 };
 
-const buildHtml = (payload) => {
+const base64UrlEncode = (value) => Buffer.from(value).toString("base64url");
+
+const createQuoteToken = (bookingPayload, secret, ttlMinutes) => {
+  const nowSeconds = Math.floor(Date.now() / 1000);
+  const tokenPayload = {
+    iat: nowSeconds,
+    exp: nowSeconds + Math.max(1, Number(ttlMinutes) || 1) * 60,
+    booking: bookingPayload,
+  };
+
+  const payloadSegment = base64UrlEncode(JSON.stringify(tokenPayload));
+  const signature = crypto.createHmac("sha256", secret).update(payloadSegment).digest("base64url");
+  return `${payloadSegment}.${signature}`;
+};
+
+const verifyQuoteToken = (token, secret) => {
+  if (!token || typeof token !== "string") {
+    throw new Error("Missing quote token.");
+  }
+
+  const parts = token.split(".");
+  if (parts.length !== 2) {
+    throw new Error("Invalid quote token format.");
+  }
+
+  const [payloadSegment, signatureSegment] = parts;
+  const expectedSignature = crypto.createHmac("sha256", secret).update(payloadSegment).digest("base64url");
+  if (signatureSegment !== expectedSignature) {
+    throw new Error("Invalid quote token signature.");
+  }
+
+  const decodedRaw = Buffer.from(payloadSegment, "base64url").toString("utf8");
+  const decoded = JSON.parse(decodedRaw);
+  if (!decoded || typeof decoded !== "object") {
+    throw new Error("Invalid quote token payload.");
+  }
+
+  const nowSeconds = Math.floor(Date.now() / 1000);
+  if (!decoded.exp || nowSeconds > Number(decoded.exp)) {
+    throw new Error("Quote token has expired.");
+  }
+
+  return decoded;
+};
+
+const buildQuoteBookingPayload = (payload) => {
+  const booking = {};
+  for (const key of QUOTE_BOOKING_FIELDS) {
+    booking[key] = `${payload[key] ?? ""}`.trim();
+  }
+  return booking;
+};
+
+const getQuoteBaseUrl = (cfg, req) => {
+  if (cfg.quoteLinkBaseUrl) {
+    return cfg.quoteLinkBaseUrl.replace(/\/+$/, "");
+  }
+
+  const origin = `${req.headers.origin || ""}`.trim();
+  if (origin) {
+    return origin.replace(/\/+$/, "");
+  }
+
+  return "https://metromobilemechanics.co.za";
+};
+
+const buildHtml = (payload, generateQuoteUrl, quoteLinkTtlMinutes) => {
   const firstName = esc(payload.firstName);
   const lastName = esc(payload.lastName);
   const customerEmail = esc(payload.email);
@@ -111,6 +200,8 @@ const buildHtml = (payload) => {
     td { padding:8px 0; vertical-align:top; }
     td:first-child { color:#6b7280; width:45%; padding-right:12px; }
     td:last-child { color:#111827; font-weight:500; }
+    .cta-wrap { margin:22px 0 6px; }
+    .cta-button { display:inline-block; background:#f97316; color:#111827 !important; text-decoration:none; font-weight:700; letter-spacing:.5px; text-transform:uppercase; font-size:12px; padding:12px 18px; border-radius:6px; }
     .footer { background:#f9fafb; text-align:center; padding:16px 32px; font-size:12px; color:#9ca3af; border-top:1px solid #e5e7eb; }
   </style>
 </head>
@@ -147,6 +238,11 @@ const buildHtml = (payload) => {
 
     <div class="section-title">Additional Details</div>
     <p style="font-size:14px;color:#374151;margin:0">${description}</p>
+
+    <div class="cta-wrap">
+      <a href="${generateQuoteUrl}" class="cta-button">Generate Quote</a>
+    </div>
+    <p style="font-size:12px;color:#6b7280;margin:10px 0 0;">This secure link expires in ${quoteLinkTtlMinutes} minutes.</p>
   </div>
   <div class="footer">
     This email was automatically generated from the booking form on metromobilemechanics.co.za.<br>
@@ -271,6 +367,10 @@ app.post("/api/send-booking", async (req, res) => {
   });
 
   const fullName = `${payload.firstName} ${payload.lastName}`.trim();
+  const quoteBookingPayload = buildQuoteBookingPayload(payload);
+  const quoteToken = createQuoteToken(quoteBookingPayload, cfg.quoteLinkSecret, cfg.quoteLinkTtlMinutes);
+  const quoteBaseUrl = getQuoteBaseUrl(cfg, req);
+  const generateQuoteUrl = `${quoteBaseUrl}/quote?token=${encodeURIComponent(quoteToken)}`;
 
   try {
     await transporter.sendMail({
@@ -278,13 +378,14 @@ app.post("/api/send-booking", async (req, res) => {
       to: `"${cfg.bookingToName}" <${cfg.bookingToEmail}>`,
       replyTo: `"${fullName}" <${customerEmail}>`,
       subject: `New Booking: ${payload.serviceType} - ${fullName}`,
-      html: buildHtml(payload),
+      html: buildHtml(payload, generateQuoteUrl, cfg.quoteLinkTtlMinutes),
       text: [
         `New booking from ${fullName}`,
         `Email: ${customerEmail}`,
         `Phone: ${payload.phone}`,
         `Service: ${payload.serviceType}`,
         `Date: ${payload.preferredDate}`,
+        `Generate Quote: ${generateQuoteUrl}`,
         `Vehicle: ${payload.carYear || ""} ${payload.carMake || ""} ${payload.carModel || ""}`.trim(),
         `Details: ${payload.description || "No additional details provided."}`,
       ].join("\n"),
@@ -321,6 +422,20 @@ app.post("/api/send-booking", async (req, res) => {
       message: exposeError ? err : "Email could not be sent.",
       ...(exposeError ? { debug: err } : {}),
     });
+  }
+});
+
+app.post("/api/quote-token", (req, res) => {
+  const cfg = getConfig();
+  const token = `${req.body?.token || ""}`;
+
+  try {
+    const decoded = verifyQuoteToken(token, cfg.quoteLinkSecret);
+    const booking = buildQuoteBookingPayload(decoded.booking || {});
+    res.status(200).json({ success: true, booking });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Could not verify quote token.";
+    res.status(422).json({ success: false, message });
   }
 });
 

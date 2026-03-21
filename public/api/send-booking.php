@@ -50,6 +50,31 @@ function loadLocalEnvFile(string $filePath): void
 loadLocalEnvFile(__DIR__ . '/.env');
 loadLocalEnvFile(dirname(__DIR__) . '/.env');
 
+function base64UrlEncode(string $value): string
+{
+  return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
+}
+
+function createQuoteToken(array $payload, string $secret, int $ttlMinutes): string
+{
+  $now = time();
+  $tokenPayload = [
+    'iat' => $now,
+    'exp' => $now + max(1, $ttlMinutes) * 60,
+    'booking' => $payload,
+  ];
+
+  $payloadJson = json_encode($tokenPayload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+  if ($payloadJson === false) {
+    throw new RuntimeException('Could not encode quote token payload.');
+  }
+
+  $payloadSegment = base64UrlEncode($payloadJson);
+  $signatureSegment = base64UrlEncode(hash_hmac('sha256', $payloadSegment, $secret, true));
+
+  return $payloadSegment . '.' . $signatureSegment;
+}
+
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 $allowedOrigins = [
     'https://metromobilemechanics.co.za',
@@ -161,6 +186,47 @@ $description = htmlspecialchars((string)($data['description'] ?? 'No additional 
 $fullName = trim($firstName . ' ' . $lastName);
 $subject = "New Booking: {$serviceType} - {$fullName}";
 
+$quotePayload = [
+  'firstName' => (string)($data['firstName'] ?? ''),
+  'lastName' => (string)($data['lastName'] ?? ''),
+  'email' => $customerEmail,
+  'phone' => (string)($data['phone'] ?? ''),
+  'address' => (string)($data['address'] ?? ''),
+  'city' => (string)($data['city'] ?? ''),
+  'zipCode' => (string)($data['zipCode'] ?? ''),
+  'carYear' => (string)($data['carYear'] ?? ''),
+  'carMake' => (string)($data['carMake'] ?? ''),
+  'carModel' => (string)($data['carModel'] ?? ''),
+  'carMileage' => (string)($data['carMileage'] ?? ''),
+  'vin' => (string)($data['vin'] ?? ''),
+  'serviceType' => (string)($data['serviceType'] ?? ''),
+  'preferredDate' => (string)($data['preferredDate'] ?? ''),
+  'preferredTime' => (string)($data['preferredTime'] ?? ''),
+  'description' => (string)($data['description'] ?? ''),
+];
+
+$quoteLinkSecret = trim((string)(getenv('QUOTE_LINK_SECRET') ?: ''));
+if ($quoteLinkSecret === '') {
+  $quoteLinkSecret = trim((string)(getenv('EMAIL_PASSWORD') ?: ''));
+}
+if ($quoteLinkSecret === '') {
+  $quoteLinkSecret = 'metro-mobile-quote-fallback-secret';
+}
+
+$quoteLinkTtlMinutes = (int)(getenv('QUOTE_LINK_TTL_MINUTES') ?: 1440);
+$quoteToken = createQuoteToken($quotePayload, $quoteLinkSecret, $quoteLinkTtlMinutes);
+
+$defaultQuoteBaseUrl = 'https://metromobilemechanics.co.za';
+if (!empty($origin)) {
+  $defaultQuoteBaseUrl = $origin;
+}
+$quoteBaseUrl = rtrim((string)(getenv('QUOTE_LINK_BASE_URL') ?: $defaultQuoteBaseUrl), '/');
+$quoteBuilderUrl = htmlspecialchars(
+  $quoteBaseUrl . '/quote?token=' . urlencode($quoteToken),
+  ENT_QUOTES,
+  'UTF-8'
+);
+
 $adminHtml = <<<HTML
 <!DOCTYPE html>
 <html lang="en">
@@ -178,6 +244,8 @@ $adminHtml = <<<HTML
     td { padding:8px 0; vertical-align:top; }
     td:first-child { color:#6b7280; width:45%; padding-right:12px; }
     td:last-child { color:#111827; font-weight:500; }
+    .cta-wrap { margin:22px 0 6px; }
+    .cta-button { display:inline-block; background:#f97316; color:#111827 !important; text-decoration:none; font-weight:700; letter-spacing:.5px; text-transform:uppercase; font-size:12px; padding:12px 18px; border-radius:6px; }
     .footer { background:#f9fafb; text-align:center; padding:16px 32px; font-size:12px; color:#9ca3af; border-top:1px solid #e5e7eb; }
   </style>
 </head>
@@ -214,6 +282,11 @@ $adminHtml = <<<HTML
 
     <div class="section-title">Additional Details</div>
     <p style="font-size:14px;color:#374151;margin:0">{$description}</p>
+
+    <div class="cta-wrap">
+      <a href="{$quoteBuilderUrl}" class="cta-button">Generate Quote</a>
+    </div>
+    <p style="font-size:12px;color:#6b7280;margin:10px 0 0;">This secure link expires in {$quoteLinkTtlMinutes} minutes.</p>
   </div>
   <div class="footer">
     This email was automatically generated from the booking form on metromobilemechanics.co.za.<br>

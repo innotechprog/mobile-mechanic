@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import ServicePage from "./pages/ServicePage";
 import About from "./pages/About";
 import BookingPolicy from "./pages/BookingPolicy";
+import QuoteBuilder from "./pages/QuoteBuilder";
 import NotFound from "./pages/NotFound";
 import WhatsAppButton from "./components/WhatsAppButton";
 import ScrollToTop from "./components/ScrollToTop";
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/services/:slug" element={<ServicePage />} />
           <Route path="/about" element={<About />} />
           <Route path="/booking-policy" element={<BookingPolicy />} />
+          <Route path="/quote" element={<QuoteBuilder />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
